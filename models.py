@@ -8,6 +8,16 @@ Model IDs verified against provider docs on 2026-08-16. Providers rename and
 retire models regularly, so re-check these when something starts returning 404.
 """
 
+import logging
+import os
+
+try:
+    import anthropic
+except ImportError:
+    anthropic = None
+
+logger = logging.getLogger(__name__)
+
 # https://developers.openai.com/api/docs/models
 OPENAI_MODELS = [
     "gpt-5.6-sol",     # flagship, $5 / $30 per Mtok
@@ -23,6 +33,30 @@ ANTHROPIC_MODELS = [
     "claude-haiku-4-5",  # fastest and cheapest, $1 / $5
 ]
 ANTHROPIC_DEFAULT = "claude-haiku-4-5"
+
+
+def _fetch_anthropic_models():
+    """Ask the Models API for the current Claude list, using ANTHROPIC_API_KEY.
+
+    Falls back to the hardcoded list when the key or SDK is missing or the
+    request fails, so the node still loads offline.
+    """
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if anthropic is None or not api_key:
+        return ANTHROPIC_MODELS
+    try:
+        fetched = [m.id for m in anthropic.Anthropic(api_key=api_key).models.list(limit=100)]
+    except anthropic.APIError as e:
+        logger.warning(f"Could not fetch Claude models, using built-in list: {e}")
+        return ANTHROPIC_MODELS
+    if not fetched:
+        return ANTHROPIC_MODELS
+    if ANTHROPIC_DEFAULT not in fetched:
+        fetched.append(ANTHROPIC_DEFAULT)
+    return fetched
+
+
+ANTHROPIC_MODELS = _fetch_anthropic_models()
 
 # https://ai.google.dev/gemini-api/docs/models
 GOOGLE_MODELS = [
