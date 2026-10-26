@@ -292,14 +292,23 @@ class PromptEnhancer:
                 if not api_key:
                     raise ValueError("Set anthropic_key or ANTHROPIC_API_KEY first")
                 client = anthropic.Anthropic(api_key=api_key)
+                extra = {}
+                if anthropic_model.endswith("-5-5"):
+                    # Opus 5.5 cannot turn thinking off, so it only gets low effort.
+                    extra["output_config"] = {"effort": "low"}
+                    if anthropic_model == "claude-sonnet-5-5":
+                        extra["thinking"] = {"type": "between_tools"}
+                    elif anthropic_model == "claude-haiku-5-5":
+                        extra["thinking"] = {"type": "disabled"}
                 response = client.messages.create(
                     model=anthropic_model,
-                    max_tokens=200,
+                    max_tokens=4000,
                     messages=[
                         {"role": "user", "content": f"{system_prompt}\n\n{user_prompt}"}
-                    ]
+                    ],
+                    **extra
                 )
-                enhanced_prompt = response.content[0].text.strip()
+                enhanced_prompt = "".join(b.text for b in response.content if b.type == "text").strip()
                 
             elif llm_provider == "google":
                 if not google_key:
