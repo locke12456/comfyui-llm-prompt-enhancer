@@ -105,6 +105,10 @@ class PromptEnhancer:
         self.style_prompts = {
             "none": "",  # Empty prompt for no style modification
             "user defined": "",  # Filled from the custom_style input
+            # Based on polish_prompt_en in github.com/QwenLM/Qwen-Image src/examples/tools/prompt_utils.py
+            "qwen image 2.1": "Rewrite this as a prompt for the Qwen-Image 2.1 model without changing its meaning. Expand brief input into a full natural-language description: subject traits, style, spatial relationships, shot composition and lighting. Any text that should appear in the image goes in double quotes, unaltered and untranslated, with its position (for example top-left) and lettering style. If no style is given, choose the most fitting one, such as realistic photography. For a transparent image, say: This is an RGBA image with transparency, and end with: The image has alpha channel and the background is transparent. Keep it under 200 words, plain text, one paragraph, and end with: Ultra HD, 4K, cinematic composition...",
+            # Caption mode of github.com/OpenMOSS/MOSS-Image skills/moss-image-prompt-enhancer
+            "moss image": "Rewrite this as a caption for the MOSS-Image model. Write cohesive English prose (or the language the user asks for), and describe spatial relations in words, never coordinates or JSON. Cover only the visible choices that make the image more specific: subject and action, relevant appearance, setting, camera and framing, medium, lighting, materials, palette and mood. Quote any visible text verbatim in its original language, keeping punctuation, capitalization and requested line breaks. Do not add quality tags, do not change the requested style, and keep a minimalist request minimalist...",
             # Follows the prompting guide on huggingface.co/circlestone-labs/Anima
             "anima": "Rewrite this as a prompt for the Anima anime model. Do not add quality, score or safety tags. Order the tags as: subject count (1girl, 1boy, 2girls...), character, series, artist, general tags. Use lowercase danbooru/gelbooru tags with spaces instead of underscores (score tags keep their underscores), preferring the gelbooru spelling when the two differ. Prefix every artist name with @, for example @big chungus. If a named character appears, keep the name and series in normal English capitalization and follow them with that character's canonical appearance: hair color and length, hairstyle, eye color, notable features and default outfit. Do this for every character so multiple characters are not confused. After the tags, add at least two short natural-language sentences describing the scene, pose, lighting and composition...",
             "detailed": "Start prompt with detailed. Convert this into a hyper-detailed visual description with precise technical specifications...",
@@ -198,7 +202,7 @@ class PromptEnhancer:
                                      "pixel art", "low poly", "isometric"],
             "Genre & Theme": ["cyberpunk", "steampunk", "gothic", "vaporwave", "retro", "vintage"],
             "Decorative Arts": ["stained glass", "mosaic", "street art"],
-            "Model Presets": ["anima"],
+            "Model Presets": ["anima", "qwen image 2.1", "moss image"],
             "Custom": ["user defined"]
         }
 
