@@ -105,9 +105,9 @@ Create a key in the [Anthropic Console](https://console.anthropic.com/) and past
 
 | Model | Notes |
 |---|---|
-| `claude-opus-5` | Flagship |
-| `claude-sonnet-5` | Middle tier |
-| `claude-haiku-4-5` | Fastest and cheapest, the default |
+| `claude-opus-5-5` | Flagship |
+| `claude-sonnet-5-5` | Middle tier |
+| `claude-haiku-5-5` | Fastest and cheapest, the default |
 
 ### Google
 

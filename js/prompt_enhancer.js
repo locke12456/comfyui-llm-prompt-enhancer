@@ -1,4 +1,5 @@
 import { app } from "/scripts/app.js";
+import { api } from "/scripts/api.js";
 
 const USER_DEFINED = "Custom > user defined";
 
@@ -28,6 +29,27 @@ app.registerExtension({
         const onNodeCreated = nodeType.prototype.onNodeCreated;
         nodeType.prototype.onNodeCreated = function () {
             const r = onNodeCreated ? onNodeCreated.apply(this, arguments) : undefined;
+
+            const keyWidget = this.widgets.find(w => w.name === "anthropic_key");
+            const modelWidget = this.widgets.find(w => w.name === "anthropic_model");
+            if (keyWidget && modelWidget) {
+                const button = this.addWidget("button", "refresh claude models", null, async () => {
+                    const res = await api.fetchApi("/prompt_enhancer/anthropic_models", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ api_key: keyWidget.value }),
+                    });
+                    const data = await res.json();
+                    if (!res.ok) {
+                        alert(`Could not refresh Claude models: ${data.error}`);
+                        return;
+                    }
+                    modelWidget.options.values = data.models;
+                    if (!data.models.includes(modelWidget.value)) modelWidget.value = data.models[0];
+                    app.graph.setDirtyCanvas(true, true);
+                });
+                button.serialize = false;
+            }
 
             const styleWidget = this.widgets.find(w => w.name === "style");
             const customWidget = this.widgets.find(w => w.name === "custom_style");

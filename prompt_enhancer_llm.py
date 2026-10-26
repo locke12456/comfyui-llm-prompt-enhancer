@@ -287,7 +287,7 @@ class PromptEnhancer:
             elif llm_provider == "anthropic":
                 if not anthropic_key:
                     raise ValueError("Anthropic API key is required")
-                client = anthropic.Client(api_key=anthropic_key)
+                client = anthropic.Anthropic(api_key=anthropic_key)
                 response = client.messages.create(
                     model=anthropic_model,
                     max_tokens=200,
