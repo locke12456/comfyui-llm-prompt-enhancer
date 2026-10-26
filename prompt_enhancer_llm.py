@@ -104,6 +104,7 @@ class PromptEnhancer:
         # Define style prompts
         self.style_prompts = {
             "none": "",  # Empty prompt for no style modification
+            "user defined": "",  # Filled from the custom_style input
             "detailed": "Start prompt with detailed. Convert this into a hyper-detailed visual description with precise technical specifications...",
             "photorealistic": "Start prompt with photorealistic. Convert this into a hyperdetailed photorealistic description with sharp focus, precise technical and visual details...",
             "cinematic": "Start prompt with cinematic. Convert this into a cinematic shot with cincematic composition, hyperdetailed, sharp focus, dynamic lighting, precise film techniques...",
@@ -194,7 +195,8 @@ class PromptEnhancer:
             "Digital & Contemporary": ["3d render", "digital art", "concept art", "comic book", 
                                      "pixel art", "low poly", "isometric"],
             "Genre & Theme": ["cyberpunk", "steampunk", "gothic", "vaporwave", "retro", "vintage"],
-            "Decorative Arts": ["stained glass", "mosaic", "street art"]
+            "Decorative Arts": ["stained glass", "mosaic", "street art"],
+            "Custom": ["user defined"]
         }
 
         # Create a flattened list of all styles with category prefixes
@@ -223,7 +225,8 @@ class PromptEnhancer:
                 "openrouter_key": ("STRING", {"multiline": False, "default": ""}),
                 "openrouter_model": ("STRING", {"multiline": False, "default": models.OPENROUTER_DEFAULT}),
                 "ollama_host": ("STRING", {"multiline": False, "default": ""}),
-                "ollama_model": ("STRING", {"multiline": False, "default": models.OLLAMA_DEFAULT})
+                "ollama_model": ("STRING", {"multiline": False, "default": models.OLLAMA_DEFAULT}),
+                "custom_style": ("STRING", {"multiline": True, "default": ""})
             }
         }
 
@@ -244,7 +247,8 @@ class PromptEnhancer:
                       anthropic_key="", anthropic_model=models.ANTHROPIC_DEFAULT,
                       google_key="", google_model=models.GOOGLE_DEFAULT,
                       openrouter_key="", openrouter_model=models.OPENROUTER_DEFAULT,
-                      ollama_host=models.OLLAMA_HOST_DEFAULT, ollama_model=models.OLLAMA_DEFAULT):
+                      ollama_host=models.OLLAMA_HOST_DEFAULT, ollama_model=models.OLLAMA_DEFAULT,
+                      custom_style=""):
         """Enhance the input prompt using the specified LLM provider and style."""
         try:
             if llm_provider == "none":
@@ -258,7 +262,11 @@ class PromptEnhancer:
                 enhancement_style = "detailed"  # Use default if category header is somehow selected
 
             system_prompt = get_system_prompt(prompt_format, llm_provider)
-            user_prompt = f"{self.style_prompts[enhancement_style]} {prompt}"
+            if enhancement_style == "user defined":
+                style_prompt = custom_style.strip()
+            else:
+                style_prompt = self.style_prompts[enhancement_style]
+            user_prompt = f"{style_prompt} {prompt}"
             
             # Handle each provider
             if llm_provider == "openai":
