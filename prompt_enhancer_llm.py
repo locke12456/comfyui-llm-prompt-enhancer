@@ -105,6 +105,8 @@ class PromptEnhancer:
         self.style_prompts = {
             "none": "",  # Empty prompt for no style modification
             "user defined": "",  # Filled from the custom_style input
+            # Follows the prompting guide on huggingface.co/circlestone-labs/Anima
+            "anima": "Rewrite this as a prompt for the Anima anime model. Do not add quality, score or safety tags. Order the tags as: subject count (1girl, 1boy, 2girls...), character, series, artist, general tags. Use lowercase danbooru/gelbooru tags with spaces instead of underscores (score tags keep their underscores), preferring the gelbooru spelling when the two differ. Prefix every artist name with @, for example @big chungus. If a named character appears, keep the name and series in normal English capitalization and follow them with that character's canonical appearance: hair color and length, hairstyle, eye color, notable features and default outfit. Do this for every character so multiple characters are not confused. After the tags, add at least two short natural-language sentences describing the scene, pose, lighting and composition...",
             "detailed": "Start prompt with detailed. Convert this into a hyper-detailed visual description with precise technical specifications...",
             "photorealistic": "Start prompt with photorealistic. Convert this into a hyperdetailed photorealistic description with sharp focus, precise technical and visual details...",
             "cinematic": "Start prompt with cinematic. Convert this into a cinematic shot with cincematic composition, hyperdetailed, sharp focus, dynamic lighting, precise film techniques...",
@@ -196,6 +198,7 @@ class PromptEnhancer:
                                      "pixel art", "low poly", "isometric"],
             "Genre & Theme": ["cyberpunk", "steampunk", "gothic", "vaporwave", "retro", "vintage"],
             "Decorative Arts": ["stained glass", "mosaic", "street art"],
+            "Model Presets": ["anima"],
             "Custom": ["user defined"]
         }
 
